@@ -1,0 +1,27 @@
+Viet ung dung chat online
+xem o trang web nay
+http://www.codeproject.com/Articles/649771/Chat-Application-in-PHP
+
+- Neu khong su dung setInteger thi co the su dung cac cong nghe khac, 
+  cong nghe push server, hay push technology. Nhung ma cong nghe nay thich hop voi Nodejs hon la Apache
+  cong nghe long polling
+  cong nghe web socket
+  nhung ma noi chung la: It is impossible for the server to tell the client something has updated without using techniques such as HTTP long polling or web sockets. Clients simply aren't listening to incoming connections, they only listen on connections they opened themselfes. Pushing state to the client also would be hard if for instance the client is behind a firewal
+
+  gmail cung su dung cong nghe long polling
+
+  binh thuong thi khi load 1 trang web ve, thi sau do ket noi lai dong lai, roi khi load 1 trang web khac thi no lai mo ket noi. 
+
+  the nhung ma voi cong nghe pushing server thi no se duy tri mo ket noi lau hon 
+
+
+  - PDO
+  tai lieu http://net.tutsplus.com/tutorials/php/why-you-should-be-using-phps-pdo-for-database-access/
+
+  tao nguoi dung moi cau lenh sql
+
+  CREATE USER 'loc'@'localhost' IDENTIFIED BY '123456';
+
+  GRANT ALL PRIVILEGES ON *.* TO 'loc'@'localhost'
+
+  GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP ON chatsystem.* TO 'loc'

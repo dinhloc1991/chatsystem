@@ -1,0 +1,30 @@
+<html>
+<head>
+	<script src="jquery-2.0.3.js" ></script> 
+	<script> 
+		$(document).ready(function(){
+			console.log("abc");
+			$("#btnLogin").click(function(){
+				console.log("abc");
+				username = $("#username").val();
+				password = $("#password").val();
+				$.ajax({
+					type:"POST", 
+					data: {"login":"true", "username":username, "password":password}, 
+					url: "handle.php"
+				}).done(function(msg){
+					console.log("login ok");
+				}).error(function(){
+					console.log("co loi xay ra");
+				}); 
+			});
+		});		 
+	</script>
+</head>
+<body>
+	username <input type="text" size "30" id = "username">
+	password <input type="password" size = 30 id = "password" > 
+	<button id = "btnLogin">login </button> 
+
+</body>
+</html>
