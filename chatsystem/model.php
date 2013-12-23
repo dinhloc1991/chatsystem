@@ -134,7 +134,7 @@ function editMessage($idMs, $content){
 
 function getAllThreadsOfUser($userID){
 	$DBH = createDBH();	
-	$firstSql = "select threadID from thread where ownerID = $userID"; 
+	$firstSql = "select threadID from member where userID = $userID"; 
 	//echo $firstSql; 
 
 	$STH = $DBH->query($firstSql);
@@ -154,8 +154,11 @@ function getAllThreadsOfUser($userID){
 	}
 }
 
-function insertMember($threadID, $memberList){
+function insertMember($threadID, $memberList, $userID){
 	$DBH = createDBH();	
+	$sql = "insert into member(threadID, userID) values ($threadID, $userID)"; 
+	$STH = $DBH->prepare($sql); 
+	$STH->execute();
 	foreach ($memberList as $name) {
 		$id = getUserId($name);
 		$sql = "insert into member(threadID, userID) values ($threadID, $id)"; 

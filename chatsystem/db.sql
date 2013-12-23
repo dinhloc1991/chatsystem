@@ -25,22 +25,5 @@ ownerID integer
 
 
 insert into user(username, password) values('loc', '123'); 
-
-
-- bang nguoi dung
-username
-ID
-password
-
-- bang tin nhan
-noi dung
-thoi gian
-ma nguoi so huu
-ma tin nhan
-ma luong tin nhan
-
-- bang nguoi tham gia luong
-ma luong
-ma nguoi tham gia
-
+insert into user(username, password) values('loc', '123'); 
 

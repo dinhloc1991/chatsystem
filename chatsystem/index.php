@@ -38,6 +38,7 @@
 	password <input type="password" size = 30 id = "password" > 
 	<button id = "btnLogin">login </button> 
 	<div id="errorInform"> </div>
+	database in file db.sql
 
 </body>
 </html>

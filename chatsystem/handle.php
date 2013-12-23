@@ -38,7 +38,7 @@ if (isset($_POST["initThread"])){
 	$userID = $_POST["userID"];
 	$memberList = json_decode($_POST["memberList"]);
 	$threadID = insertThread($userID);
-	insertMember($threadID, $memberList);  
+	insertMember($threadID, $memberList, $userID);  
 	//print_r($memberList); 
 	echo "$threadID";  
 }

@@ -10,12 +10,15 @@
 
 #dvThread{
 	width: 700px;
-	height: 100px;
+	height: 400px;
 	border-style: solid;
 	border-width: 1px;
 	border-color: red; 
 	overflow: scroll;
+}
 
+#chatroom{
+	float:left;
 }
 #dvInput{
 
@@ -24,6 +27,15 @@
 .hide{
 	display: none;
 }
+
+#otherroom{
+	margin-top: 100px;
+	width: 500px; 
+	border-style: solid;
+	border-width: 1px;
+	border-color: red; 
+	float:right;
+}
 </style>
 <head>
 	<script src="jquery-2.0.3.js" > </script>
@@ -31,7 +43,7 @@
 		var getMessage; 
 		threadID = -1; 
 		$(document).ready(function(){
-			//getMessageManyTimes();
+			getMessageManyTimes();
 			var members = Array(); 
 			$("#newThreadBt").addClass("hide");  
 	///////////////////////////////////////////////////////		
@@ -56,7 +68,7 @@
 								}
 								$("#error").html();
 							}else {
-								console.log("chua co nguoi ten la "+ addedUserName);
+								console.log("do not exist user "+ addedUserName);
 								$("#error").html("error : chua co user ten la "+addedUserName);
 							}
 						});   
@@ -165,7 +177,7 @@
 					console.log(msg); 
 				});  
 			}
-			getMessageManyTimes = function(){
+			function getMessageManyTimes(){
 				var t = setInterval(function(){
 					$.ajax({
 						type:"POST", 
@@ -260,6 +272,7 @@
 	</script>
 </head>
 <body>
+	<div id = "chatroom">
 	<?php include "model.php" ; ?> 
 	<?php
 		session_start();
@@ -276,7 +289,7 @@
 			header("Location: index.php"); 
 		}
 	?>
-	<div id = "chatroom">
+	
 		<div id = "createMembers"> 
 			Who you want to chat with 
 			<input id = "ipUser" type = "text" size = 20 />
