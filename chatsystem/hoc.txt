@@ -25,3 +25,12 @@ http://www.codeproject.com/Articles/649771/Chat-Application-in-PHP
   GRANT ALL PRIVILEGES ON *.* TO 'loc'@'localhost'
 
   GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP ON chatsystem.* TO 'loc'
+
+
+  - Cach dung git xem o day 
+  https://help.github.com/articles/create-a-repo
+
+
+  - truoc khi ve dung cau lenh suspend 
+
+  - chu y la div thi dung text tendiv.text()

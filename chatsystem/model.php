@@ -6,15 +6,8 @@ function createDBH(){
 		$dbname = "chatsystem";
 		$host="localhost";
 		$DBH = new PDO("mysql:host=$host;dbname=$dbname", $user, $password);
-		// $hash = array(); 
-		// array_push($hash, "username"=> "varchar(50)"); 
-		// array_push($hash, "password"=> "varchar(50)");  
-		// createTableByHash("user", $hash);
-	//	echo "ket noi db thanh cong ";
 	}catch(PDOException $e){
-	//	echo $e->getMessage(); 
-	//	echo "loi o day"; 
-
+	
 	}
 	return $DBH; 
 }
@@ -30,18 +23,13 @@ function checkUserByUsername($username){
 			break;
 		}
 		if ($flag == 0){
-	//		echo "chua co nguoi ten la $username";
-			return 1;
+			return "chuaco";
 		}else {
 	//		echo "da co nguoi ten la $username";
-			return 0; 
+			return "daco"; 
 		}
-	// }catch(PDOException e){
-	// 	echo "co loi trong cau lenh sql"; 
-	// }
 }
 function insertUser($username, $password){
-//	try{
 	if (checkUserByUsername($username)== 0) {
 		return 0;
 	}
@@ -49,33 +37,66 @@ function insertUser($username, $password){
 	$sql = "insert into user(username, password) values ('$username', '$password'); "; 
 	$STH = $DBH->prepare($sql); 
 	$STH->execute();
-//	echo $sql;
-//	return 1; 
-	//  }catch(PDOException $e){
-	//  	echo $e->getMessage();
-	// }
 }
-
-//insertUser("loc123456", "123"); 
-// function createTableByHash($tablename, $hash){
-// 	$sql = "create table if not exsit user(";
-// 	for ($hash as $key => $value){
-// 		$sql = $sql.$key." ".$value." not null" ; 
-// 	}
-// 	$sql = $sql.");"
-// 	echo $sql; 
-// }
 
 function insertThread($ownerID){
 	$DBH = createDBH();	
-	$sql = "insert into thread(ownerID) values ($ownerID); "; 
+	$sql = "insert into thread(ownerID) values('$ownerID'); "; 
 	$STH = $DBH->prepare($sql); 
 	$STH->execute();
-//	echo $sql;
 	return $DBH->lastInsertId();
 }
 
-function putMessage($message){
-	
+
+function checkUserLogin($username, $password){
+	$sql = "select * from user where username = '$username' and password = '$password' ";
+	$DBH = createDBH();
+	$STH = $DBH->query($sql);
+	$STH->setFetchMode(PDO::FETCH_ASSOC); 
+	$flag = 0; 
+	while($row = $STH->fetch()){
+		$flag = 1; 
+		break;
+	}
+	if ($flag == 0){
+//		echo "chua co nguoi ten la $username";
+		return "chuaco";
+	}else {
+//		echo "da co nguoi ten la $username";
+		return "daco"; 
+	}
+}
+
+function getUserId($username){
+	$sql = "select * from user where username = '$username'";
+	//echo $sql ; 
+	$DBH = createDBH();
+	$STH = $DBH->query($sql);
+	$STH->setFetchMode(PDO::FETCH_ASSOC); 
+	while($row = $STH->fetch()){
+		$id = $row["ID"]; 
+		return $id; 
+	}
+	return -1; 
+}
+
+function insertMessage($userID, $threadID, $content){
+	$DBH = createDBH();	
+	echo "cai gia tri thread ID o may chu ".$threadID; 
+	$sql = "insert into message(content, ownerID, threadID) values ('$content', '$userID', '$threadID'); "; 
+	$STH = $DBH->prepare($sql); 
+	$STH->execute();
+}
+
+function getAllMessageToString(){
+	$DBH = createDBH();	
+	$sql = "select * from message"; 
+	$STH = $DBH->query($sql);
+	$STH->setFetchMode(PDO::FETCH_ASSOC);  
+	$str = ""; 
+	while($row = $STH->fetch()){
+		$str = $str.$row["content"]."<br>"; 
+	}
+	return $str; 
 }
 ?>

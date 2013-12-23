@@ -10,5 +10,8 @@
  	// if(supportSSE()){
  	// 	console.log("duoc");
  	// }else console.log("ko duoc"); 
- 	EventSource()
+ 	
+ 	var array = Array(); 
+ 	array.push("loc");
+ 	console.log(array); 
  </script>
