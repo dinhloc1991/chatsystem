@@ -80,6 +80,19 @@ function getUserId($username){
 	return -1; 
 }
 
+function getUsernameById($id){
+	$sql = "select * from user where ID = $id ";
+	//echo $sql ; 
+	$DBH = createDBH();
+	$STH = $DBH->query($sql);
+	$STH->setFetchMode(PDO::FETCH_ASSOC); 
+	while($row = $STH->fetch()){
+		$username = $row["username"]; 
+		return $username ; 
+	}
+	return ""; 
+}
+
 function insertMessage($userID, $threadID, $content){
 	$DBH = createDBH();	
 	echo "cai gia tri thread ID o may chu ".$threadID; 
@@ -88,15 +101,66 @@ function insertMessage($userID, $threadID, $content){
 	$STH->execute();
 }
 
-function getAllMessageToString(){
+function getAllMessageToString($threadID){
 	$DBH = createDBH();	
-	$sql = "select * from message"; 
+	$sql = "select * from message where threadID = $threadID"; 
 	$STH = $DBH->query($sql);
 	$STH->setFetchMode(PDO::FETCH_ASSOC);  
 	$str = ""; 
 	while($row = $STH->fetch()){
-		$str = $str.$row["content"]."<br>"; 
+		$id = $row["ID"]; 
+		$ownerID = $row["ownerID"]; 
+		$username = getUsernameById($ownerID); 
+		$str = $str."<div id = 'ms$id'> $username : ".$row["content"]."</div> <button id='rm$id' onclick='removeMessage($id)'>Remove</button><button id='ed$id' onclick='editMessage($id)'>Edit</button> "; 
+	//	$str = $str.$row["content"]."<br>"; 
 	}
 	return $str; 
+}
+
+function removeMessage($idMs){
+	$DBH = createDBH();	
+	$sql = "delete from message where ID = $idMs"; 
+	$STH = $DBH->prepare($sql); 
+	$STH->execute();
+}
+
+function editMessage($idMs, $content){
+	$DBH = createDBH();	
+	$sql = "update message set content = '$content' where ID = $idMs"; 
+	$STH = $DBH->prepare($sql); 
+	$STH->execute();
+}
+
+
+function getAllThreadsOfUser($userID){
+	$DBH = createDBH();	
+	$firstSql = "select threadID from thread where ownerID = $userID"; 
+	//echo $firstSql; 
+
+	$STH = $DBH->query($firstSql);
+	$STH->setFetchMode(PDO::FETCH_ASSOC); 
+	while($row = $STH->fetch()){
+		$threadID = $row["threadID"];
+		$secondSql = "select u.username from user as u, member as m where m.threadID = $threadID and m.userID = u.ID "; 
+		//echo $secondSql; 
+		$STH2 = $DBH->query($secondSql);
+		$STH2->setFetchMode(PDO::FETCH_ASSOC);
+		$threadInfo = "<div id = 'thread$threadID' onclick='continueThread($threadID)'> "; 
+		while($row2 = $STH2->fetch()){ 
+			$threadInfo.=$row2["username"].", "; 
+		} 
+		$threadInfo.="</div>";
+		echo $threadInfo;  
+	}
+}
+
+function insertMember($threadID, $memberList){
+	$DBH = createDBH();	
+	foreach ($memberList as $name) {
+		$id = getUserId($name);
+		$sql = "insert into member(threadID, userID) values ($threadID, $id)"; 
+		$STH = $DBH->prepare($sql); 
+		$STH->execute();
+	}
 }
 ?>

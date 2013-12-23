@@ -1,8 +1,5 @@
 <?
-// function getContent(){
-// 	$content = file_get_contents("log.txt"); 
-// 	echo $content; 
-// }
+
 include "model.php";
 
 if(isset($_POST["addmember"])){
@@ -14,9 +11,6 @@ if(isset($_POST["addmember"])){
 
 }
 
-if (isset($_POST["message¥"])){
-	insertMessage(message);
-}
 
 if (isset($_POST["login"])){
 	$username = $_POST["username"];
@@ -42,7 +36,10 @@ if (isset($_POST["logout"])){
 
 if (isset($_POST["initThread"])){
 	$userID = $_POST["userID"];
-	$threadID = insertThread($userID); 
+	$memberList = json_decode($_POST["memberList"]);
+	$threadID = insertThread($userID);
+	insertMember($threadID, $memberList);  
+	//print_r($memberList); 
 	echo "$threadID";  
 }
 
@@ -54,7 +51,21 @@ if (isset($_POST["message"])){
 }
 
 if (isset($_POST["getMessage"])){
-	$s = getAllMessageToString(); 
+	$s = getAllMessageToString($_POST["threadID"]); 
 	echo $s; 
 }
+
+if (isset($_POST["removeMessage"])) {
+	$idMs = $_POST["idMs"];
+	removeMessage($idMs); 
+	echo "ok"; 
+}
+
+if (isset($_POST["editMessage"])) {
+	$idMs = $_POST["idMs"];
+	$content = $_POST["content"];
+	editMessage($idMs, $content); 
+	echo "ok"; 
+}
+
 ?>

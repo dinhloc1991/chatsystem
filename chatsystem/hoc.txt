@@ -30,6 +30,19 @@ http://www.codeproject.com/Articles/649771/Chat-Application-in-PHP
   - Cach dung git xem o day 
   https://help.github.com/articles/create-a-repo
 
+ra ngoai thu muc chatystem
+sau do: ]
+git add chatsystem/
+git commit -m 'ten tin nhan' (neu chua co thi phai tao )
+git push origin master 
+
+
+
+
+co nghia la minh phai stage no, sau do roi commit, sau do roi push no len 
+cau lenh push len la
+git push origin master
+----------
 
   - truoc khi ve dung cau lenh suspend 
 

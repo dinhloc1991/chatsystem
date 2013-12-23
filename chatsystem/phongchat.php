@@ -21,14 +21,23 @@
 
 }
 
+.hide{
+	display: none;
+}
 </style>
 <head>
 	<script src="jquery-2.0.3.js" > </script>
 	<script>
+		var getMessage; 
+		threadID = -1; 
 		$(document).ready(function(){
-			console.log("abcd"); 
+			//getMessageManyTimes();
 			var members = Array(); 
-			threadID = -1; 
+			$("#newThreadBt").addClass("hide");  
+	///////////////////////////////////////////////////////		
+	///////////////////////////// event catching Functions 		
+			
+
 			$("#ipUser").on("keypress", function(e){
 				if (e.which  == 13){
 					console.log("nut enter duoc bam");
@@ -80,6 +89,16 @@
 					}
 				}); 
 			}); 
+
+			$("#newThreadBt").click(function(){
+				console.log("create new thread"); 
+				$("#newThreadBt").addClass("hide");
+				$("#createMembers").removeClass("hide"); 
+				$("#ipUser").val(""); 
+				$("#memberList").html(""); 
+			}); 
+//////////////////////////////////////////////////////////
+///////////////////// functions exchaning data with server  			
 			function uploadMessage(){
 				console.log("gia tri la "+$("#memberList").text()); 
 				if ($("#memberList").text()=="") {
@@ -87,19 +106,21 @@
 					return; 
 				}
 
-				var message = $("#tfinput").val();
+				message = $("#tfinput").val();
 				console.log("noi dung message "+message);
 
 				if ($("#dvThread").text()=="") {
-					initThread();
-					getMessage(); 
+					initThread();      //neu ma chua co tin nhan nao thi khoi tao thread
+				//	getMessage();      //sau do put message vao thread do 
 					console.log("abcdde"); 
 				}else{
+					putMessageToServer(message, threadID, userID);  //sau khi da co thread thi put noi dung tin nhan 
 					console.log("thread da duoc khoi tao roi　 "); 
 				}
+
 				$("#dvThread").append(message+"<br>");
-				console.log("gia tri thread ID flag 2 "+threadID); 
-				putMessageToServer(message, threadID, userID);  //DaNG LAM TOI DAY 
+		//		console.log("gia tri thread ID flag 2 "+threadID); 
+		//		putMessageToServer(message, threadID, userID);  //sau khi da co thread thi put noi dung tin nhan 
 				// $.ajax({
 				// 	type: "POST",
 				// 	data: { "message":　message},
@@ -117,13 +138,16 @@
 			function initThread(){ 
 				$.ajax({
 					type:"POST", 
-					data: {"initThread":"true", "userID":userID}, 
+					data: {"initThread":"true", "userID":userID, "memberList":JSON.stringify(members)}, 
 					url:"handle.php", 
 					success: function(msg){
 						//if (msg=="ok") console.log("init thread ok"); 
 						threadID = msg; 
 						console.log("gia tri thread id tra ve "+threadID); 
 						setThreadID(threadID); 
+						putMessageToServer(message, threadID, userID); 
+						$("#newThreadBt").removeClass("hide"); 
+						$("#createMembers").addClass("hide"); 
 					}, 
 					error: function(){
 						console.log("bi loi o threadid"); 
@@ -141,12 +165,12 @@
 					console.log(msg); 
 				});  
 			}
-			function getMessage(){
+			getMessageManyTimes = function(){
 				var t = setInterval(function(){
 					$.ajax({
 						type:"POST", 
 						url: "handle.php", 
-						data:{"getMessage":"true"},
+						data:{"getMessage":"true", "threadID":threadID},
 					}).done(function (msg){
 						//console.log(msg);
 						console.log("gia tri message tra ve "+msg);  
@@ -154,6 +178,20 @@
 					}); 
 				},1000);
 			}
+
+			getMessage= function(){
+				$.ajax({
+					type:"POST", 
+					url: "handle.php", 
+					data:{"getMessage":"true", "threadID":threadID},
+				}).done(function (msg){
+					//console.log(msg);
+					console.log("gia tri message tra ve "+msg);  
+					$("#dvThread").html(msg); 
+				}); 
+			}
+
+
 			// function poll(){
 		 //    	$.ajax({ 
 		 //    		url: "handle.php", 
@@ -171,17 +209,65 @@
 		 //    		}
 		 //    	});
 			// };
-		}); 	
+
+		
+			
+		}); 
+		//bat tin hieu cua cac nut remove va edit 
+		function removeMessage($idMs){
+			$.ajax({
+				type: "POST", 
+				data:{"removeMessage":"true", "idMs":$idMs}, 
+				url:"handle.php", 
+				success : function(ms){
+					console.log("remove success"); 
+				}, 
+				error : function(){
+					console.log("problem occur at remove message"); 
+				}
+			}); 
+		}
+		
+		function editMessage($idMs){
+			val = $("#ms"+$idMs).text();
+			console.log("gia tri val "+val );  
+			ms = prompt("value you want to edit ",val);
+			if (ms!=val){
+				$.ajax({
+				type: "POST", 
+				data:{"editMessage":"true", "idMs":$idMs, "content":ms}, 
+				url:"handle.php", 
+				success : function(ms){
+					console.log("edit success"); 
+				}, 
+				error : function(){
+					console.log("problem occur at edit message"); 
+				}
+				}); 
+			}
+		}
+
+
+			////////////////////////////////////////Get all threads of user 
+		function continueThread($threadID){
+			console.log("lay duoc thread "); 
+			threadID = $threadID; 
+			getMessage(); 
+			$("#memberList").html($("#thread"+$threadID).text()); 
+		}
+
+
 	</script>
 </head>
 <body>
+	<?php include "model.php" ; ?> 
 	<?php
 		session_start();
 		if (isset($_SESSION["username"])){
 			$username = $_SESSION["username"];
 			$password = $_SESSION["password"];
 			$userID = $_SESSION["userid"]; 
-			echo "chao $username";
+			echo "Hi $username";
 			echo "<script> var userID　= $userID; </script> "; 
 			?>
 			<button id = "btnLogout"> Logout </button> <?php   
@@ -192,13 +278,14 @@
 	?>
 	<div id = "chatroom">
 		<div id = "createMembers"> 
-			Nhap vao username cua nguoi muon gui: 
+			Who you want to chat with 
 			<input id = "ipUser" type = "text" size = 20 />
 			<div id = "memberList" ></div>
 			<div id = "error"> 
 			</div>
 		</div>	
 
+		<div id="createNewThread"><button id = 'newThreadBt'> Create New Thread </button></div> 
 		<div id = "dvThread"></div>
 		<div id = "dvInput"> 
 			Input <input id="tfinput" type="text" size = 30 /> 
@@ -206,7 +293,11 @@
 
 		</div>
 	</div>
-
+	<div id="otherroom"> 
+		<?php 
+			getAllThreadsOfUser($userID); 
+		?>
+	</div>
 
 </body>
 
